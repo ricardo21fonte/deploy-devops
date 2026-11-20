@@ -1,0 +1,25 @@
+services: 
+  api: 
+    image: "${IMAGE_REPO:?Imagem obrigatoria}:${APP_VERSION:?Versao obrigatoria}" 
+    ports: 
+      - "${HOST_PORT:-8003}:8000" 
+    environment: 
+      APP_ENV: ${APP_ENV:-production} 
+      APP_VERSION: ${APP_VERSION} 
+      LOG_LEVEL: ${LOG_LEVEL:-INFO} 
+    restart: unless-stopped 
+    healthcheck: 
+      test: 
+        - CMD 
+        - python 
+        - -c 
+        - > 
+          import urllib.request; 
+          urllib.request.urlopen( 
+            'http://127.0.0.1:8000/health', 
+            timeout=3 
+          ) 
+      interval: 10s 
+      timeout: 5s 
+      retries: 3 
+      start_period: 10s 
